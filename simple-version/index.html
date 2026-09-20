@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>USMLE Step 2 CK Practice</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <h1 class="text-xl font-bold text-primary-600">USMLE Step 2 CK</h1>
+        <nav class="hidden md:flex items-center space-x-1">
+          <a href="#dashboard" class="nav-link px-3 py-2 rounded-lg text-sm font-medium" data-page="dashboard">📊 Dashboard</a>
+          <a href="#topics" class="nav-link px-3 py-2 rounded-lg text-sm font-medium" data-page="topics">📚 Topics</a>
+          <a href="#review" class="nav-link px-3 py-2 rounded-lg text-sm font-medium" data-page="review">🔄 Review</a>
+          <a href="#exam" class="nav-link px-3 py-2 rounded-lg text-sm font-medium" data-page="exam">📝 Mock Exam</a>
+          <a href="#progress" class="nav-link px-3 py-2 rounded-lg text-sm font-medium" data-page="progress">📈 Progress</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Dashboard Page -->
+    <section id="page-dashboard" class="page active">
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold text-slate-900">Dashboard</h2>
+        <p class="text-slate-600 mt-1">Welcome back! Here's your progress overview.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8" id="stat-cards">
+        <!-- Stats loaded by JS -->
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div class="card bg-white rounded-xl shadow-sm border border-slate-100 p-6">
+          <h3 class="text-lg font-semibold text-slate-900 mb-4">Spaced Repetition</h3>
+          <div class="grid grid-cols-3 gap-4 mb-4" id="sr-stats">
+            <!-- SR stats loaded by JS -->
+          </div>
+          <button id="btn-start-review" class="btn btn-primary w-full" onclick="showPage('review')">Start Review</button>
+        </div>
+
+        <div class="card bg-white rounded-xl shadow-sm border border-slate-100 p-6">
+          <h3 class="text-lg font-semibold text-slate-900 mb-4">Quick Actions</h3>
+          <div class="grid grid-cols-2 gap-3">
+            <button class="btn btn-secondary" onclick="showPage('topics')">Practice by Topic</button>
+            <button class="btn btn-primary" onclick="showPage('exam')">Mock Exam</button>
+            <button class="btn btn-secondary" onclick="showPage('review')">Spaced Review</button>
+            <button class="btn btn-outline" onclick="showPage('progress')">View Progress</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Topics Page -->
+    <section id="page-topics" class="page hidden">
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold text-slate-900">Practice by Topic</h2>
+        <p class="text-slate-600 mt-1">Select a topic to practice questions</p>
+      </div>
+
+      <button id="btn-sync" class="btn btn-primary mb-6" onclick="syncQuestions()">Sync Questions from MedQA</button>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="topics-grid">
+        <!-- Topics loaded by JS -->
+      </div>
+    </section>
+
+    <!-- Practice Session Page -->
+    <section id="page-practice" class="page hidden">
+      <div class="max-w-3xl mx-auto space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-2xl font-bold text-slate-900" id="practice-theme">Topic</h2>
+            <p class="text-slate-600">Question <span id="q-current">1</span> of <span id="q-total">10</span></p>
+          </div>
+          <div class="text-sm text-slate-500">⏱ <span id="practice-timer">0:00</span></div>
+        </div>
+
+        <div class="flex gap-2" role="progressbar" id="practice-progress"></div>
+
+        <div class="card bg-white rounded-xl shadow-sm border border-slate-100 p-6" id="question-card">
+          <!-- Question rendered by JS -->
+        </div>
+
+        <div class="flex gap-3" id="practice-actions">
+          <!-- Buttons rendered by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Spaced Repetition Page -->
+    <section id="page-review" class="page hidden">
+      <div class="max-w-3xl mx-auto space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-2xl font-bold text-slate-900">Spaced Repetition</h1>
+            <p class="text-slate-600">Review <span id="review-count">0</span> due questions</p>
+          </div>
+        </div>
+
+        <div class="flex gap-2" role="progressbar" id="review-progress"></div>
+
+        <div class="card bg-white rounded-xl shadow-sm border border-slate-100 p-6" id="review-card">
+          <!-- Question rendered by JS -->
+        </div>
+
+        <div class="flex gap-3" id="review-actions">
+          <!-- Buttons rendered by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Mock Exam Page -->
+    <section id="page-exam" class="page hidden">
+      <div id="exam-start" class="max-w-2xl mx-auto card bg-white rounded-xl shadow-sm border border-slate-100 p-8 text-center">
+        <h2 class="text-2xl font-bold text-slate-900 mb-2">USMLE Step 2 CK Mock Exam</h2>
+        <p class="text-slate-600 mb-8">40 questions covering all major topics</p>
+        <div class="grid grid-cols-2 gap-4 mb-8 text-left">
+          <div class="p-4 bg-slate-50 rounded-lg"><p class="font-medium">40 Questions</p><p class="text-sm text-slate-600">All Step 2 CK topics</p></div>
+          <div class="p-4 bg-slate-50 rounded-lg"><p class="font-medium">Timed</p><p class="text-sm text-slate-600">Track your pace</p></div>
+          <div class="p-4 bg-slate-50 rounded-lg"><p class="font-medium">Instant Scoring</p><p class="text-sm text-slate-600">Detailed explanations</p></div>
+          <div class="p-4 bg-slate-50 rounded-lg"><p class="font-medium">Review Mode</p><p class="text-sm text-slate-600">Flag & review questions</p></div>
+        </div>
+        <button id="btn-start-exam" class="btn btn-primary w-full text-lg py-4" onclick="startExam()">Start Mock Exam</button>
+      </div>
+
+      <div id="exam-active" class="hidden max-w-4xl mx-auto">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Mock Exam</h2>
+            <p class="text-slate-600">Question <span id="exam-q-num">1</span> of 40</p>
+          </div>
+          <div class="text-right">
+            <p class="text-lg font-mono font-bold text-primary-600">⏱ <span id="exam-timer">0:00</span></p>
+            <p class="text-sm text-slate-500"><span id="exam-answered">0</span>/40 answered</p>
+          </div>
+        </div>
+        <div class="h-2 bg-slate-200 rounded-full overflow-hidden mb-6">
+          <div id="exam-progress-bar" class="h-full bg-primary-600 transition-all" style="width: 0%"></div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <div class="lg:col-span-3 space-y-4">
+            <div class="card bg-white rounded-xl shadow-sm border border-slate-100 p-6" id="exam-question-card"></div>
+            <div class="flex items-center justify-between">
+              <button class="btn btn-secondary" onclick="examPrev()" disabled>Previous</button>
+              <div class="flex gap-1 flex-wrap justify-center" id="exam-nav"></div>
+              <button class="btn btn-secondary" onclick="examNext()">Next</button>
+            </div>
+          </div>
+          <div class="lg:col-span-1">
+            <div class="card bg-white rounded-xl shadow-sm border border-slate-100 p-4 sticky top-24">
+              <h3 class="font-semibold text-slate-900 mb-3">Quick Navigation</h3>
+              <div class="grid grid-cols-5 gap-1 mb-4" id="exam-quick-nav"></div>
+              <div class="border-t border-slate-200 pt-3">
+                <p class="text-sm text-slate-600 mb-2"><span id="exam-answered-count">0</span> of 40 answered</p>
+                <button id="btn-submit-exam" class="btn btn-primary w-full" onclick="submitExam()" disabled>Submit Exam</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Exam Results Page -->
+    <section id="page-exam-results" class="page hidden">
+      <div class="max-w-4xl mx-auto space-y-8">
+        <div class="card bg-white rounded-xl shadow-sm border border-slate-100 p-8 text-center">
+          <h2 class="text-2xl font-bold text-slate-900 mb-4">Exam Results</h2>
+          <div class="flex items-center justify-center gap-8 mb-4" id="results-summary"></div>
+          <div class="flex gap-4 justify-center">
+            <button class="btn btn-primary" onclick="showPage('exam')">Take Another Exam</button>
+            <button class="btn btn-secondary" onclick="showPage('progress')">View Progress</button>
+          </div>
+        </div>
+
+        <div class="card bg-white rounded-xl shadow-sm border border-slate-100 p-6">
+          <h3 class="text-lg font-semibold text-slate-900 mb-4">Question Review</h3>
+          <div class="space-y-6" id="results-questions"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Progress Page -->
+    <section id="page-progress" class="page hidden">
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold text-slate-900">Progress Overview</h2>
+        <p class="text-slate-600 mt-1">Track your performance across topics</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8" id="progress-stats">
+        <!-- Stats loaded by JS -->
+      </div>
+
+      <div class="card bg-white rounded-xl shadow-sm border border-slate-100 p-6">
+        <h3 class="text-lg font-semibold text-slate-900 mb-4">Score by Topic</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead>
+              <tr class="border-b border-slate-200">
+                <th class="pb-3 font-medium text-slate-600">Topic</th>
+                <th class="pb-3 font-medium text-slate-600 text-right">Attempted</th>
+                <th class="pb-3 font-medium text-slate-600 text-right">Correct</th>
+                <th class="pb-3 font-medium text-slate-600 text-right">Score</th>
+                <th class="pb-3 font-medium text-slate-600">Progress</th>
+              </tr>
+            </thead>
+            <tbody id="progress-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

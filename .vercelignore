@@ -1,0 +1,36 @@
+# Vercel ignore file
+node_modules
+.git
+.gitignore
+*.log
+.env
+.env.local
+.env.production.local
+.env.development.local
+.vercel
+*.tsbuildinfo
+dist
+*.md
+!vercel.json
+
+# Backend
+backend/node_modules
+backend/dist
+backend/*.log
+backend/.env*
+
+# Frontend
+frontend/node_modules
+frontend/dist
+frontend/*.log
+frontend/.env*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
